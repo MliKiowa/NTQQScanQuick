@@ -1,5 +1,5 @@
-# ScanQuick
-快速对软件进行Scan分析Offset
+# NTQQScanQuick
+快速对NTQQ进行Scan分析Offset
 
 ## 特点
 - [x] 几乎不受版本约束？
