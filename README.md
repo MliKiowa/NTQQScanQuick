@@ -1,0 +1,2 @@
+# NTQQScanQuick
+NTQQScanQuick
