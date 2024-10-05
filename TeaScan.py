@@ -21,5 +21,7 @@ for tea_detal in list_tea_detal:
             continue
         list_inner_crypt.append(tea_crypt_inner['start'])
         print('[debug] Maybe TEA Crypt Inner: ', hex(tea_crypt_inner['start']+pe_image_base))
-        tea_crypt_outer = search_data_maybe_xref(pe, tea_crypt_inner['start'], text_start, text_end)
-        print('[debug] Maybe TEA Crypt Outer: ', hex(tea_crypt_outer+pe_image_base))
+        tea_crypt_outer = search_call_maybe_xref(pe, tea_crypt_inner['start'], text_start, text_end)
+        if tea_crypt_outer:
+            print('[debug] Maybe TEA Crypt Outer: ', hex(tea_crypt_outer+pe_image_base))
+

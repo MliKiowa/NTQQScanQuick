@@ -80,6 +80,13 @@ def search_data_maybe_xref(pe, string_rva, start, end):
             return i
     return None
 
+# search_data_maybe_xref和search_data_maybe_xref_all 忘记兼容上跳的情况了
+def search_call_maybe_xref(pe, string_rva, start, end):
+    for i in range(start, end+1):
+        if int.from_bytes(pe.get_data(i, 4), 'little',signed=True) + i + 4 == string_rva:
+            return i
+    return None
+
 def search_data_pattern_all(pe, pattern, start, end):
     rva_list = []
     pattern = pattern.replace(' ', '').replace('0x', '').lower()
