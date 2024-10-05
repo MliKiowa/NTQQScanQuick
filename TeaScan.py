@@ -42,9 +42,9 @@ for tea_detal_pair in list_tea_detal_pair:
     #     continue
     tea_encrypt = find_function_containing_address(list_func_ranges, tea_detal_pair[0])
     tea_decrypt = find_function_containing_address(list_func_ranges, tea_detal_pair[1])
+    # 这里搜索到的是代码块 再来一次xref搜索
     if tea_encrypt and tea_decrypt:
-        list_tea_detal_xref_func.append((tea_encrypt['start'], tea_decrypt['start']))
-
-for tea_detal_pair in list_tea_detal_xref_func:
-    print('[result] TEA Encrypt Function: ',hex(tea_detal_pair[0]+pe_image_base))
-    print('[result] TEA Decrypt Function: ',hex(tea_detal_pair[1]+pe_image_base))
+        list_xref_encrypt_inner = search_data_maybe_xref_all(pe, tea_encrypt['start'], text_start, text_end)
+        list_xref_decrypt_inner= search_data_maybe_xref_all(pe, tea_decrypt['start'], text_start, text_end)
+        print('[debug] TEA Encrypt Function: ', hex(tea_encrypt['start']+pe_image_base))
+        print('[debug] TEA Decrypt Function: ', hex(tea_decrypt['start']+pe_image_base))
