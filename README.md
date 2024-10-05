@@ -8,8 +8,8 @@
 
 ## 进度
 - [x] Aes Scan
-- [ ] 业务Tea Scan
-- [ ] 登录Tea Scan
+- [x] 业务Tea Scan
+- [x] 登录Tea Scan
 
 ## 运行
 修改 pe 文件地址即刻分析
