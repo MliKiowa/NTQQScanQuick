@@ -12,17 +12,26 @@ def get_function_ranges(pe):
     functions = []
     current_func = None
 
-    for insn in md.disasm(code, start_addr):
-        if insn.mnemonic == 'push' and insn.op_str == 'rbp':
+    insn_list = list(md.disasm(code, start_addr))
+
+    i = 0
+    while i < len(insn_list):
+        insn = insn_list[i]
+        if (insn.mnemonic == 'push' and insn.op_str == 'rsi' and
+            i + 2 < len(insn_list) and
+            insn_list[i + 1].mnemonic == 'push' and insn_list[i + 1].op_str == 'rdi' and
+            insn_list[i + 2].mnemonic == 'push' and insn_list[i + 2].op_str == 'rbp'):
             if current_func:
                 functions.append(current_func)
             current_func = {'start': insn.address, 'end': None}
+            i += 2  # Skip the next two instructions as they are part of the function prologue
         elif insn.mnemonic == 'mov' and insn.op_str == 'rbp, rsp':
             if current_func:
                 functions.append(current_func)
             current_func = {'start': insn.address, 'end': None}
         if current_func:
             current_func['end'] = insn.address + insn.size
+        i += 1
 
     if current_func:
         functions.append(current_func)
