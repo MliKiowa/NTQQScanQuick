@@ -1,6 +1,9 @@
 import pefile
 from capstone import *
 
+import pefile
+from capstone import *
+
 def get_function_ranges(pe):
     md = Cs(CS_ARCH_X86, CS_MODE_64)
     md.skipdata = True
@@ -17,14 +20,14 @@ def get_function_ranges(pe):
     i = 0
     while i < len(insn_list):
         insn = insn_list[i]
-        if (insn.mnemonic == 'push' and insn.op_str == 'rsi' and
-            i + 2 < len(insn_list) and
-            insn_list[i + 1].mnemonic == 'push' and insn_list[i + 1].op_str == 'rdi' and
-            insn_list[i + 2].mnemonic == 'push' and insn_list[i + 2].op_str == 'rbp'):
+        if insn.mnemonic == 'push' and insn.op_str == 'rbp':
+            # 向上搜索连续的push指令
+            j = i - 1
+            while j >= 0 and insn_list[j].mnemonic == 'push':
+                j -= 1
             if current_func:
                 functions.append(current_func)
-            current_func = {'start': insn.address, 'end': None}
-            i += 2  # Skip the next two instructions as they are part of the function prologue
+            current_func = {'start': insn_list[j + 1].address, 'end': None}
         elif insn.mnemonic == 'mov' and insn.op_str == 'rbp, rsp':
             if current_func:
                 functions.append(current_func)
@@ -70,17 +73,17 @@ def search_bytes(pe, start, end, bytes):
 def search_data_maybe_xref_all(pe, string_rva, start, end):
     rva_list = []
     for i in range(start, end+1):
-        if int.from_bytes(pe.get_data(i, 4), 'little') + i + 4 == string_rva:
+        if int.from_bytes(pe.get_data(i, 4), 'little',signed=True) + i + 4 == string_rva:
                 rva_list.append(i)
     return rva_list
 
 def search_data_maybe_xref(pe, string_rva, start, end):
     for i in range(start, end+1):
-        if int.from_bytes(pe.get_data(i, 4), 'little') + i + 4 == string_rva:
+        if int.from_bytes(pe.get_data(i, 4), 'little',signed=True) + i + 4 == string_rva:
             return i
     return None
 
-# search_data_maybe_xref和search_data_maybe_xref_all 忘记兼容上跳的情况了
+# search_data_maybe_xref和search_data_maybe_xref_all 忘记兼容上跳的情况了 已兼容
 def search_call_maybe_xref(pe, string_rva, start, end):
     for i in range(start, end+1):
         if int.from_bytes(pe.get_data(i, 4), 'little',signed=True) + i + 4 == string_rva:
