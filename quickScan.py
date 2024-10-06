@@ -1,9 +1,6 @@
 import pefile
 from capstone import *
 
-import pefile
-from capstone import *
-
 def get_function_ranges(pe):
     md = Cs(CS_ARCH_X86, CS_MODE_64)
     md.skipdata = True
